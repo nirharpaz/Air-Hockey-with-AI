@@ -14,7 +14,8 @@ public abstract class PaddleController : MonoBehaviour
     protected Rigidbody _rb;
 
     public bool CanMove = true;
-    // Start is called before the first frame update
+    
+    // Get BOunderies on Awake
     protected virtual void  Awake()
     {
         if (Constraints != null)
@@ -34,7 +35,8 @@ public abstract class PaddleController : MonoBehaviour
         _transform = transform;
         _rb = _transform.GetComponent<Rigidbody>();
     }
-
+    
+    //Main positioning method, set position with respect to the bounderies constraints
     protected void SetPosition(Vector3 newPos)
     {
         newPos.z = 0f;
@@ -43,7 +45,8 @@ public abstract class PaddleController : MonoBehaviour
         
         _rb.MovePosition(newPos);
     }
-
+    
+    // Allow or disallow movement toggle
     public void EnableMovement(bool allowed)
     {
         CanMove = allowed;

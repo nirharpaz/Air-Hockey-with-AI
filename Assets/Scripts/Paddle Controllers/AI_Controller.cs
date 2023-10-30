@@ -24,7 +24,13 @@ public class AI_Controller : PaddleController
     [SerializeField] private bool _disengaging = false;
 
     private bool _hitPuck = false;
-
+    
+    //Reaction Types
+    enum Reaction
+    {
+        Idle, Attack,Guard, stuck
+    }
+    
     // Start is called before the first frame update
     protected override void Awake()
     {
@@ -33,8 +39,10 @@ public class AI_Controller : PaddleController
         _initPosition = _transform.position;
         _initPosition.z = 0;
     }
-
-    // Update is called once per frame
+    
+#region AI
+    // Main tracking on the AI situation is handled from FixedUpdate
+    //It is then executed from the method React
     void FixedUpdate()
     {
         if (!CanMove) return;
@@ -50,6 +58,8 @@ public class AI_Controller : PaddleController
             if (!_inGate && !_disengaging)
             {
                 React(Reaction.Guard);
+                // Is the paddle is in the same place for over a given amount of time,
+                // assume that the situation is stuck and retreat to predefined init pos to try again. 
                 if (_rb.position == lastKnownPosition)
                 {
                     StuckTimeCheck +=Time.deltaTime;
@@ -58,7 +68,7 @@ public class AI_Controller : PaddleController
                         _disengaging = true;
                     }
                 }
-            }
+            }// Perform the disengagement
             else if(_disengaging) 
             {
                 React(Reaction.stuck);
@@ -69,73 +79,45 @@ public class AI_Controller : PaddleController
                     _disengaging = false;
                 }
             }
-            
         }
-        
-       
-        //go Active
+
+        //Go aggrassive
         else if (CheckIfPuckIsInMyHalf() && !CheckIfPuckIsAboveMe())
         {
-            // Defend gate right after Hitting the puck
+            // Move thowards the gate for defense right after Hitting the puck
             if (_hitPuck)
             {
                 React(Reaction.Guard);
                 Invoke("ResetHitPuck",ReAttackCounter);
             }
-            // hit the puck if not done so already
+            // Hit the puck if not done so already
             else
             {
                 React(Reaction.Attack);
             }
         }
-      
-    }
-
-    private void LateUpdate()
-    {
-        lastKnownPosition = _rb.position;
-    }
-
-    protected bool CheckIfPuckIsInMyHalf()
-    {
-        if (_puck.position.y < _bounderies.Down)
-            return false;
-        return true;
     }
     
-    protected bool CheckIfPuckIsAboveMe()
-    {
-        if (_puck.position.y > _transform.position.y)
-            return true;
-        return false;
-    }
     
-    // toggle from defensive to offensive after each hit
-    protected void ResetHitPuck()
-    {
-        _hitPuck = false;
-    }  
-    
-
-    enum Reaction
-    {
-        Idle, Attack,Guard, stuck
-    }
-
+    // Execute dediated reaction
     private void React(Reaction r)
     {
         switch (r)
         {
+            // Behaviour when the puck is on the opponent side
             case Reaction.Idle:
                 SetPosition(IdleMove.Wait(_rb, _puck, _initPosition));
                 break;
+            // Attack behaviour
             case Reaction.Attack:
                 SetPosition(OffensiveMove.Act(_rb, _puck));
                 break;
+            // Defensive behaviour
             case Reaction.Guard:
                 if (GatePos != null)
                     SetPosition(DefensiveMove.Act(_rb, _puck));
                 break;
+            // Handle situations where AI is stuck in place for any reason
             case Reaction.stuck:
                 if (ResetPos != null)
                     SetPosition(StuckMove.Act(_rb,ResetPos));
@@ -143,8 +125,45 @@ public class AI_Controller : PaddleController
         }
 
     }
-    
+#endregion
 
+#region player and puck position checks
+
+    // Update last known position
+    private void LateUpdate()
+    {
+        lastKnownPosition = _rb.position;
+    }
+    
+    // checks if the pack is in player's half or opponent's half
+    protected bool CheckIfPuckIsInMyHalf()
+    {
+        if (_puck.position.y < _bounderies.Down)
+            return false;
+        return true;
+    }
+    
+    // Checks the position of the puck relative to player
+    protected bool CheckIfPuckIsAboveMe()
+    {
+        if (_puck.position.y > _transform.position.y)
+            return true;
+        return false;
+    }
+    
+    // Check if near the gate
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.tag == "Gate")
+        {
+            _inGate = true;
+            _hitPuck = false;        
+        }    
+    }
+    
+#endregion
+    
+#region Hitting puck
     // When Hitting puck
     private void OnCollisionEnter(Collision collision)
     {
@@ -153,13 +172,11 @@ public class AI_Controller : PaddleController
             _hitPuck=true;
         }
     }
-
-    private void OnTriggerEnter(Collider other)
+    // Toggle from defensive to offensive after each hit
+    protected void ResetHitPuck()
     {
-        if (other.transform.tag == "Gate")
-        {
-            _inGate = true;
-            _hitPuck = false;        }    
+        _hitPuck = false;
     }
+#endregion
 
 }

@@ -2178,10 +2178,10 @@ MonoBehaviour:
   ReAttackCounter: 0.5
   GatePos: {fileID: 1155815458}
   ResetPos: {fileID: 2127337499}
-  OffensiveMove: {fileID: 11400000, guid: 27743de3fa5f55a48b2248ab557c9853, type: 2}
-  DefensiveMove: {fileID: 11400000, guid: 01061b3f788bce5449340de0caa9db17, type: 2}
+  OffensiveMove: {fileID: 11400000, guid: 246d5bdea3559f34d961346974dfcbb3, type: 2}
+  DefensiveMove: {fileID: 11400000, guid: 246d5bdea3559f34d961346974dfcbb3, type: 2}
   IdleMove: {fileID: 11400000, guid: e990aef2b52c4324bac1a97a54edc711, type: 2}
-  StuckMove: {fileID: 11400000, guid: e922cb68911a31f4789a51072eb0e244, type: 2}
+  StuckMove: {fileID: 11400000, guid: efdbf569151ac354990cd71bf0f06640, type: 2}
   lastKnownPosition: {x: 0, y: 0, z: 0}
   StuckTimeCheck: 0
   _disengaging: 0

@@ -13,7 +13,8 @@ public class IdleStrategy : StrategyMove
     {
         throw new System.NotImplementedException();
     }
-
+    
+    // Allign with puck at reduced random speed to allow challenge
     public override Vector2 Wait(Rigidbody rb, Transform target, Vector2 refferancePos)
     {
         float speed = Random.Range(speedRange.x, speedRange.y);

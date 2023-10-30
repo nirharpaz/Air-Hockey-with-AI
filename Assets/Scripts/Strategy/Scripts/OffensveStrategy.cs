@@ -2,15 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-[CreateAssetMenu(fileName = "OffensiveStrategy1", menuName = "CustomScriptableObject/Stratrgy/Offensive")]
+[CreateAssetMenu(fileName = "StrightLineMove", menuName = "CustomScriptableObject/Stratrgy/StrightLineMove")]
 public class OffensveStrategy : StrategyMove
 {
+    //Move Straight to the target pose
     public override Vector2 Act(Rigidbody rb, Transform target)
     { 
         Vector2 TargetPos = target.position;
         return Act(rb, TargetPos);
     }
-
+    
+    //Move Straight to the target pose in a random speed between interval
     public override Vector2 Act(Rigidbody rb, Vector2 target)
     {
         float speed = Random.Range(speedRange.x, speedRange.y);

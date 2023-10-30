@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e811823af0ef65f48a65dc851bc1d142, type: 3}
+  m_Script: {fileID: 11500000, guid: e879a4b83a496e94088ad91e9ac79f24, type: 3}
   m_Name: StuckMove
   m_EditorClassIdentifier: 
   speedRange: {x: 4, y: 7}
